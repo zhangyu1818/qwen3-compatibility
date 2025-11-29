@@ -5,9 +5,6 @@ version: 2
 
 # Project metadata
 project_name: qwen3-compatibility
-github:
-  owner: zhangyu1818
-  name: qwen3-compatibility
 
 # Build configuration
 builds:

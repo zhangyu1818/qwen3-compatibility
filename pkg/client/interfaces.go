@@ -15,5 +15,5 @@ type Uploader interface {
 
 // ASRProvider defines the interface for ASR operations
 type ASRProvider interface {
-	CallASR(ctx context.Context, apiKey, audioURL, model string, language *models.SupportedLanguage, enableITN bool) (*models.ASRResponse, error)
+	CallASR(ctx context.Context, apiKey, audioURL, model string, language *models.SupportedLanguage, enableITN bool, prompt string) (*models.ASRResponse, error)
 }

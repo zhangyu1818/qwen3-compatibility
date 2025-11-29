@@ -14,7 +14,7 @@ type IUploadService interface {
 
 // IASRService defines the interface for ASR service
 type IASRService interface {
-	TranscribeAudio(ctx context.Context, apiKey, audioURL, model string, language *models.SupportedLanguage) (*models.ASRResponse, error)
+	TranscribeAudio(ctx context.Context, apiKey, audioURL, model string, language *models.SupportedLanguage, prompt string) (*models.ASRResponse, error)
 	ConvertToOpenAIFormat(asrResponse *models.ASRResponse, processingTimeMs int64) *models.TranscriptionResponse
 	CreateVerboseResponse(asrResponse *models.ASRResponse, processingTimeMs int64, uploadInfo *models.UploadResult) *models.VerboseTranscriptionResponse
 }

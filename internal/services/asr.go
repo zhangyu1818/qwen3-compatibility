@@ -19,8 +19,8 @@ func NewASRService(client client.ASRProvider) *ASRService {
 }
 
 // TranscribeAudio transcribes audio using DashScope ASR service
-func (s *ASRService) TranscribeAudio(ctx context.Context, apiKey, audioURL, model string, language *models.SupportedLanguage) (*models.ASRResponse, error) {
-	return s.client.CallASR(ctx, apiKey, audioURL, model, language, false) // Disable ITN by default (match TS worker)
+func (s *ASRService) TranscribeAudio(ctx context.Context, apiKey, audioURL, model string, language *models.SupportedLanguage, prompt string) (*models.ASRResponse, error) {
+	return s.client.CallASR(ctx, apiKey, audioURL, model, language, true, prompt)
 }
 
 // ConvertToOpenAIFormat converts ASR response to OpenAI compatible format

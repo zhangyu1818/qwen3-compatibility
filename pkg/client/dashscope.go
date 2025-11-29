@@ -98,7 +98,13 @@ func (c *DashScopeClient) UploadToOSS(ctx context.Context, policy *models.Upload
 }
 
 // CallASR calls the ASR service for transcription
-func (c *DashScopeClient) CallASR(ctx context.Context, apiKey, audioURL, model string, language *models.SupportedLanguage, enableITN bool) (*models.ASRResponse, error) {
+func (c *DashScopeClient) CallASR(ctx context.Context, apiKey, audioURL, model string, language *models.SupportedLanguage, enableITN bool, prompt string) (*models.ASRResponse, error) {
+	// Use prompt if provided, otherwise use space to maintain current behavior
+	systemText := prompt
+	if systemText == "" {
+		systemText = " "
+	}
+
 	asrRequest := models.ASRRequest{
 		Model: model,
 		Input: models.ASRInput{
@@ -106,7 +112,7 @@ func (c *DashScopeClient) CallASR(ctx context.Context, apiKey, audioURL, model s
 				{
 					Role: "system",
 					Content: []models.ASRContent{
-						{Text: " "}, // Use space to avoid empty object while keeping semantic emptiness
+						{Text: systemText},
 					},
 				},
 				{

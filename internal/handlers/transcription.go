@@ -64,6 +64,7 @@ func (h *TranscriptionHandler) Transcription(c *gin.Context) {
 	// Parse other form fields
 	model := c.PostForm("model")
 	language := c.PostForm("language")
+	prompt := c.PostForm("prompt") // Optional: contextual information for transcription
 
 	// Validate model is provided
 	if model == "" {
@@ -73,8 +74,8 @@ func (h *TranscriptionHandler) Transcription(c *gin.Context) {
 		return
 	}
 
-	log.Printf("Transcription request: file=%s, model=%s, language=%s, size=%d",
-		header.Filename, model, language, header.Size)
+	log.Printf("Transcription request: file=%s, model=%s, language=%s, prompt=%s, size=%d",
+		header.Filename, model, language, prompt, header.Size)
 
 	// Validate language if provided
 	var languagePtr *models.SupportedLanguage
@@ -101,8 +102,8 @@ func (h *TranscriptionHandler) Transcription(c *gin.Context) {
 
 	log.Printf("File uploaded successfully: %s, expires: %s", uploadResult.OSSURL, uploadResult.ExpireTime.Format(time.RFC3339))
 
-	// Call ASR service
-	asrResponse, err := h.asrService.TranscribeAudio(c.Request.Context(), apiKeyStr, uploadResult.OSSURL, model, languagePtr)
+	// Call ASR service with prompt
+	asrResponse, err := h.asrService.TranscribeAudio(c.Request.Context(), apiKeyStr, uploadResult.OSSURL, model, languagePtr, prompt)
 	if err != nil {
 		log.Printf("ASR service failed: %v", err)
 		c.JSON(http.StatusInternalServerError, models.ErrorResponse{

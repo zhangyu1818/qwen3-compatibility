@@ -15,6 +15,19 @@ A Go implementation providing OpenAI-compatible APIs for Qwen3 services.
 - **Multi-Modal Support**: Handles audio, video, and text (future)
 - **Production Ready**: Graceful shutdown, structured logging, error handling
 
+## Installation
+
+### Homebrew (macOS/Linux)
+
+```bash
+# Install via Homebrew Tap
+brew tap zhangyu1818/tap
+brew install qwen3-compatibility
+
+# Start as a background service
+brew services start zhangyu1818/tap/qwen3-compatibility
+```
+
 ## Quick Start
 
 ### Prerequisites

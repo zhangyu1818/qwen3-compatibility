@@ -45,6 +45,15 @@ go run ./cmd/server
 go run ./cmd/server --port=9001
 ```
 
+### Version Management
+```bash
+# Display version information
+./server version
+
+# Get current version from git tags
+git describe --tags --always
+```
+
 ### Dependencies
 ```bash
 # Download dependencies
@@ -79,6 +88,68 @@ go vet ./...
 
 # Run golint (if installed)
 golint ./...
+```
+
+## Release and Distribution
+
+This project uses **GoReleaser** for automated release management, which is the industry standard for Go CLI tools.
+
+### Local Development Build
+```bash
+# Install GoReleaser locally (optional)
+go install github.com/goreleaser/goreleaser/v2@latest
+
+# Test release locally (dry run)
+goreleaser release --snapshot --clean --skip-publish
+
+# Build for all platforms locally
+goreleaser build --clean
+```
+
+### Automated Release Process
+
+1. **Tag a release**:
+   ```bash
+   git tag v0.0.1
+   git push origin v0.0.1
+   ```
+
+2. **GitHub Actions will automatically**:
+   - Run all tests and checks
+   - Build binaries for all platforms (Linux, macOS, Windows)
+   - Generate SHA256 checksums
+   - Create GitHub Release with all assets
+   - Update Homebrew formula in `zhangyu1818/tap`
+
+### Supported Platforms
+- **Linux**: amd64, arm64
+- **macOS**: amd64 (Intel), arm64 (Apple Silicon)
+- **Windows**: amd64
+
+### Installation Methods
+
+#### Homebrew (Recommended)
+```bash
+brew tap zhangyu1818/tap
+brew install qwen3-compatibility
+```
+
+#### Direct Download
+```bash
+# Linux/macOS
+curl -L "https://github.com/zhangyu1818/qwen3-compatibility/releases/latest/download/qwen3-compatibility-$(uname -s)-$(uname -m)" | tar xz
+chmod +x qwen3-compatibility
+
+# Windows
+# Download qwen3-compatibility-windows-amd64.exe from releases page
+```
+
+
+#### From Source
+```bash
+git clone https://github.com/zhangyu1818/qwen3-compatibility
+cd qwen3-compatibility
+go build -o qwen3-compatibility ./cmd/server
 ```
 
 ## Configuration

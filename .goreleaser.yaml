@@ -1,0 +1,145 @@
+# GoReleaser configuration for qwen3-compatibility
+# https://goreleaser.com/customization/
+
+version: 2
+
+# Project metadata
+project_name: qwen3-compatibility
+github:
+  owner: zhangyu1818
+  name: qwen3-compatibility
+
+# Build configuration
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64  # Windows ARM64 is not widely used
+    binary: qwen3-compatibility
+    main: ./cmd/server
+    ldflags:
+      - -s -w
+      - -X 'main.Version={{.Version}}'
+      - -X 'main.GitCommit={{.Commit}}'
+      - -X 'main.BuildTime={{.CommitDate}}'
+
+# Archive configuration
+archives:
+  - format: tar.gz
+    name_template: '{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}'
+    files:
+      - README.md
+      - LICENSE*
+    format_overrides:
+      - goos: windows
+        format: zip
+
+# Universal binary for macOS
+universal_binaries:
+  - replace: false
+
+# Homebrew configuration
+brews:
+  - repository:
+      owner: zhangyu1818
+      name: homebrew-tap
+      branch: main
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    name: qwen3-compatibility
+    homepage: https://github.com/zhangyu1818/qwen3-compatibility
+    description: "OpenAI-compatible API server for Qwen3 ASR services"
+    license: MIT
+    test: |
+      system "#{bin}/qwen3-compatibility version"
+    service: |
+      run [opt_bin/"qwen3-compatibility", "server"]
+      keep_alive: true
+      run_type: interval
+      interval: 10
+      log_path var/"log/qwen3-compatibility.log"
+      error_log_path var/"log/qwen3-compatibility.error.log"
+  
+
+# Release configuration
+release:
+  github:
+    owner: zhangyu1818
+    name: qwen3-compatibility
+  draft: false
+  prerelease: auto
+  name_template: '{{.ProjectName}} {{.Version}}'
+  header: |
+    # Release {{.Version}}
+
+    🎉 qwen3-compatibility {{.Version}} is now available!
+
+    ## 📥 Downloads
+
+    - **Linux**: `qwen3-compatibility-linux-amd64` (Intel), `qwen3-compatibility-linux-arm64` (ARM)
+    - **macOS**: `qwen3-compatibility-darwin-amd64` (Intel), `qwen3-compatibility-darwin-arm64` (Apple Silicon)
+    - **Windows**: `qwen3-compatibility-windows-amd64.exe`
+
+    ## 🚀 Installation
+
+    ### Homebrew (Recommended)
+    ```bash
+    brew tap zhangyu1818/tap
+    brew install qwen3-compatibility
+    ```
+
+    ### Direct Download
+    ```bash
+    # Linux/macOS
+    curl -L "https://github.com/zhangyu1818/qwen3-compatibility/releases/latest/download/qwen3-compatibility-$(uname -s)-$(uname -m)" | tar xz
+    chmod +x qwen3-compatibility
+
+    # Windows
+    # Download and run qwen3-compatibility-windows-amd64.exe
+    ```
+
+    ### From Source
+    ```bash
+    git clone https://github.com/zhangyu1818/qwen3-compatibility
+    cd qwen3-compatibility
+    go build -o qwen3-compatibility ./cmd/server
+    ```
+
+    ## 🔐 Verification
+    All downloads include SHA256 checksums for verification.
+
+    ## 📝 Changelog
+  footer: |
+    ## 👤 Maintainers
+
+    - [@zhangyu1818](https://github.com/zhangyu1818)
+
+    ## 📄 License
+
+    MIT License - see [LICENSE](https://github.com/zhangyu1818/qwen3-compatibility/blob/main/LICENSE) file for details.
+
+# Changelog configuration
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+      - '^ci:'
+  groups:
+    - title: Features
+      regexp: '^.*feat[(\\w)]*:+.*$'
+      order: 0
+    - title: 'Bug fixes'
+      regexp: '^.*fix[(\\w)]*:+.*$'
+      order: 1
+    - title: Others
+      order: 999

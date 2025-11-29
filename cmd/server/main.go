@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"runtime"
 	"syscall"
 	"time"
 
@@ -22,6 +23,12 @@ import (
 
 var (
 	cfg *config.Config
+
+	// Version information
+	Version   = "v0.0.1"
+	GitCommit = "unknown"
+	BuildTime = "unknown"
+	GoVersion = runtime.Version()
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -46,11 +53,26 @@ Available Endpoints:
 	RunE: runServer,
 }
 
+// versionCmd represents the version command
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "Print the version information",
+	Long:  `Print the version, commit hash, build time, and Go version information.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Printf("qwen3-compatibility %s\n", Version)
+		fmt.Printf("Git commit: %s\n", GitCommit)
+		fmt.Printf("Built: %s\n", BuildTime)
+		fmt.Printf("Go version: %s\n", GoVersion)
+	},
+}
+
 func init() {
 	// Initialize flags on root command only
 	config.InitializeFlags(rootCmd)
 	// Server command inherits flags from root
 	rootCmd.AddCommand(serverCmd)
+	// Add version command
+	rootCmd.AddCommand(versionCmd)
 }
 
 func main() {

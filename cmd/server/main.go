@@ -98,12 +98,15 @@ func runServer(cmd *cobra.Command, args []string) error {
 
 	cfg = loadedCfg
 
-	// Set gin mode
-	if gin.Mode() == gin.DebugMode {
-		gin.SetMode(gin.DebugMode)
-	} else {
-		gin.SetMode(gin.ReleaseMode)
+	// Set gin mode based on environment variable, default to release
+	// This follows 12-factor app principles and provides a secure default
+	// Development: export GIN_MODE=debug
+	// Production: will use release mode by default
+	ginMode := os.Getenv("GIN_MODE")
+	if ginMode == "" {
+		ginMode = gin.ReleaseMode
 	}
+	gin.SetMode(ginMode)
 
 	// Create services and clients
 	dashscopeClient := client.NewDashScopeClient(

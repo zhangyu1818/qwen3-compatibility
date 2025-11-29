@@ -58,9 +58,9 @@ brews:
       system "#{bin}/qwen3-compatibility version"
     service: |
       run [opt_bin/"qwen3-compatibility", "server"]
-      keep_alive: true
-      run_type: interval
-      interval: 10
+      keep_alive true
+      run_type :interval
+      interval 10
       log_path var/"log/qwen3-compatibility.log"
       error_log_path var/"log/qwen3-compatibility.error.log"
   
